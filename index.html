@@ -1,66 +1,296 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>陕西高校评分</title>
 <style>
-  body { font-family: -apple-system, sans-serif; background: #f5f5f7; text-align: center; padding: 60px 20px; margin: 0; }
-  h1 { font-size: 36px; letter-spacing: -1px; color: #1d1d1f; }
-  p { color: #86868b; font-size: 18px; margin-bottom: 40px; }
-  .btn { background: #0071e3; color: #fff; border: none; padding: 16px 32px; border-radius: 99px; font-size: 18px; font-weight: 600; cursor: pointer; }
-  
-  /* 支付弹窗 */
-  .modal { position: fixed; bottom: -100%; left: 0; width: 100%; background: #fff; border-radius: 24px 24px 0 0; padding: 30px 20px; box-sizing: border-box; transition: bottom 0.3s ease; box-shadow: 0 -10px 40px rgba(0,0,0,0.1); text-align: left; }
-  .modal.show { bottom: 0; }
-  .modal h3 { margin-top: 0; font-size: 20px; text-align: center; }
-  .pay-card { background: #f5f5f7; padding: 20px; border-radius: 16px; display: flex; justify-content: space-between; font-size: 20px; font-weight: 600; margin: 20px 0; }
-  .btn-confirm { background: #1d1d1f; color: #fff; border: none; padding: 18px; border-radius: 16px; font-size: 18px; font-weight: 600; width: 100%; cursor: pointer; }
-  .mask { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; }
-  .mask.show { display: block; }
+    :root {
+        --bg: #f5f5f7;
+        --card-bg: #ffffff;
+        --text: #1d1d1f;
+        --text-sub: #86868b;
+        --accent: #0071e3;
+        --radius: 20px;
+        --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+        font-family: -apple-system, "SF Pro Text", "Helvetica Neue", sans-serif;
+        background: var(--bg); color: var(--text);
+        -webkit-font-smoothing: antialiased; overflow-x: hidden;
+    }
+    
+    /* 导航栏 */
+    .navbar {
+        position: fixed; top: 0; left: 0; width: 100%; height: 54px;
+        background: rgba(245, 245, 247, 0.85);
+        backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px);
+        z-index: 100; display: flex; align-items: center; justify-content: space-between;
+        padding: 0 20px; border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    .nav-btn { color: var(--accent); font-size: 17px; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+    .nav-title { font-size: 17px; font-weight: 600; position: absolute; left: 50%; transform: translateX(-50%); }
+    
+    /* 页面切换容器 */
+    .page-container { padding-top: 54px; height: 100vh; overflow-y: auto; position: relative; }
+    .page { display: none; padding: 20px; animation: pageFadeIn 0.4s var(--ease) both; padding-bottom: 60px;}
+    .page.active { display: block; }
+    @keyframes pageFadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 学校列表 */
+    .hero-title { font-size: 34px; font-weight: 700; letter-spacing: -0.5px; margin: 10px 0 20px; line-height: 1.1; }
+    .uni-list { display: flex; flex-direction: column; gap: 14px; }
+    .uni-card {
+        background: var(--card-bg); border-radius: var(--radius); padding: 20px;
+        display: flex; align-items: center; justify-content: space-between;
+        cursor: pointer; transition: transform 0.2s var(--ease), box-shadow 0.2s;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+    }
+    .uni-card:active { transform: scale(0.97); }
+    .uni-info h3 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+    .uni-info p { font-size: 13px; color: var(--text-sub); }
+    .uni-score { font-size: 20px; font-weight: 700; color: var(--accent); font-family: "SF Pro Display", sans-serif; }
+
+    /* 评分详情页 */
+    .detail-header { text-align: center; margin-bottom: 30px; }
+    .detail-header h2 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 5px; }
+    .detail-header p { color: var(--text-sub); font-size: 14px; }
+    
+    .score-group {
+        background: var(--card-bg); border-radius: var(--radius); padding: 24px 20px;
+        margin-bottom: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+    }
+    .score-item { margin-bottom: 24px; }
+    .score-item:last-child { margin-bottom: 0; }
+    .score-label { display: flex; justify-content: space-between; font-size: 16px; font-weight: 500; margin-bottom: 16px; }
+    .score-val { font-weight: 700; color: var(--accent); font-family: "SF Pro Display", sans-serif; }
+    
+    /* 丝滑的打分滑块 */
+    input[type=range] {
+        -webkit-appearance: none; width: 100%; background: transparent; height: 24px;
+    }
+    input[type=range]:focus { outline: none; }
+    input[type=range]::-webkit-slider-runnable-track {
+        width: 100%; height: 6px; cursor: pointer; background: #e5e5ea; border-radius: 3px;
+        background-image: linear-gradient(var(--accent), var(--accent));
+        background-size: 0% 100%; background-repeat: no-repeat;
+        transition: background-size 0.05s linear; /* 核心丝滑过渡 */
+    }
+    input[type=range]::-webkit-slider-thumb {
+        height: 22px; width: 22px; border-radius: 50%; background: #fff; cursor: pointer;
+        -webkit-appearance: none; margin-top: -8px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.2), 0 0 1px rgba(0,0,0,0.1);
+        transition: transform 0.1s;
+    }
+    input[type=range]:active::-webkit-slider-thumb { transform: scale(1.15); }
+
+    /* 按钮 */
+    .btn-primary {
+        width: 100%; background: var(--accent); color: #fff; font-size: 17px; font-weight: 600;
+        padding: 16px; border-radius: 14px; border: none; cursor: pointer; margin-top: 10px;
+        transition: background 0.2s, transform 0.1s;
+    }
+    .btn-primary:active { background: #005bb5; transform: scale(0.98); }
+
+    /* 历史记录页 */
+    .record-card {
+        background: var(--card-bg); border-radius: var(--radius); padding: 20px;
+        margin-bottom: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+    }
+    .record-card h4 { font-size: 16px; margin-bottom: 12px; }
+    .record-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tag { background: #f5f5f7; padding: 6px 12px; border-radius: 8px; font-size: 12px; color: #424245; }
+    .empty-state { text-align: center; color: var(--text-sub); margin-top: 40px; font-size: 15px; }
 </style>
 </head>
 <body>
 
-<h1>全新登场。</h1>
-<p>点击下方按钮体验假付款功能</p>
-<button class="btn" onclick="openPay()">立即购买</button>
+<div class="navbar">
+    <div class="nav-btn" id="backBtn" style="visibility: hidden;" onclick="goBack()">‹ 返回</div>
+    <div class="nav-title" id="navTitle">陕西高校</div>
+    <div class="nav-btn" onclick="showPage('historyPage', '评分记录')">记录</div>
+</div>
 
-<div class="mask" id="mask" onclick="closePay()"></div>
+<div class="page-container">
+    <!-- 主页 -->
+    <div class="page active" id="homePage">
+        <h1 class="hero-title">发现陕西<br>好大学。</h1>
+        <div class="uni-list" id="uniList"></div>
+    </div>
 
-<div class="modal" id="modal">
-  <h3>确认订单</h3>
-  <div class="pay-card">
-    <span>Apple Pay</span>
-    <span>¥ 1,899</span>
-  </div>
-  <button class="btn-confirm" id="payBtn" onclick="doPay()">双击侧边按钮付款</button>
+    <!-- 打分页 -->
+    <div class="page" id="scorePage">
+        <div class="detail-header">
+            <h2 id="scoreUniName">加载中...</h2>
+            <p>请根据您的真实体验进行打分 (0-100)</p>
+        </div>
+        
+        <div class="score-group">
+            <div class="score-item">
+                <div class="score-label"><span>食堂环境</span><span class="score-val" id="val-canteen">80</span></div>
+                <input type="range" min="0" max="100" value="80" oninput="updateSlider(this, 'val-canteen')">
+            </div>
+            <div class="score-item">
+                <div class="score-label"><span>教学质量</span><span class="score-val" id="val-teach">80</span></div>
+                <input type="range" min="0" max="100" value="80" oninput="updateSlider(this, 'val-teach')">
+            </div>
+            <div class="score-item">
+                <div class="score-label"><span>师资力量</span><span class="score-val" id="val-faculty">80</span></div>
+                <input type="range" min="0" max="100" value="80" oninput="updateSlider(this, 'val-faculty')">
+            </div>
+            <div class="score-item">
+                <div class="score-label"><span>校园环境</span><span class="score-val" id="val-env">80</span></div>
+                <input type="range" min="0" max="100" value="80" oninput="updateSlider(this, 'val-env')">
+            </div>
+        </div>
+        
+        <button class="btn-primary" onclick="submitScore()">提交评分</button>
+    </div>
+
+    <!-- 记录页 -->
+    <div class="page" id="historyPage">
+        <div id="historyList">
+            <div class="empty-state">暂无评分记录</div>
+        </div>
+    </div>
 </div>
 
 <script>
-  function openPay() {
-    document.getElementById('modal').classList.add('show');
-    document.getElementById('mask').classList.add('show');
-  }
-  function closePay() {
-    document.getElementById('modal').classList.remove('show');
-    document.getElementById('mask').classList.remove('show');
-    setTimeout(() => {
-      const btn = document.getElementById('payBtn');
-      btn.innerText = '双击侧边按钮付款';
-      btn.style.background = '#1d1d1f';
-      btn.disabled = false;
-    }, 300);
-  }
-  function doPay() {
-    const btn = document.getElementById('payBtn');
-    btn.innerText = '处理中...';
-    btn.disabled = true;
-    setTimeout(() => {
-      btn.innerText = '✓ 支付成功';
-      btn.style.background = '#34c759';
-      setTimeout(closePay, 1500);
-    }, 1200);
-  }
+    // 陕西省代表高校数据
+    const universities = [
+        { id: 1, name: "西安交通大学", tag: "985 / 211 / 双一流", score: 96 },
+        { id: 2, name: "西北工业大学", tag: "985 / 211 / 国防七子", score: 95 },
+        { id: 3, name: "西安电子科技大学", tag: "211 / 双一流 / 两电一邮", score: 92 },
+        { id: 4, name: "陕西师范大学", tag: "211 / 双一流 / 师范", score: 88 },
+        { id: 5, name: "西北大学", tag: "211 / 双一流 / 综合", score: 87 },
+        { id: 6, name: "长安大学", tag: "211 / 双一流 / 交通", score: 85 },
+        { id: 7, name: "西安建筑科技大学", tag: "建筑老八校", score: 84 },
+        { id: 8, name: "西安理工大学", tag: "省属重点 / 理工", score: 82 }
+    ];
+
+    let currentUni = null;
+    let history = [];
+    let pageStack = ['homePage'];
+
+    // 初始化列表
+    const uniList = document.getElementById('uniList');
+    universities.forEach(u => {
+        const card = document.createElement('div');
+        card.className = 'uni-card';
+        card.innerHTML = `
+            <div class="uni-info">
+                <h3>${u.name}</h3>
+                <p>${u.tag}</p>
+            </div>
+            <div class="uni-score">${u.score}</div>
+        `;
+        card.onclick = () => openScorePage(u);
+        uniList.appendChild(card);
+    });
+
+    // 滑块逻辑
+    function updateSlider(el, valId) {
+        const val = el.value;
+        document.getElementById(valId).innerText = val;
+        // 丝滑填充进度条背景
+        const percent = (val / el.max) * 100;
+        el.style.backgroundSize = percent + '% 100%';
+    }
+
+    // 页面切换逻辑
+    function showPage(pageId, title) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        document.getElementById('navTitle').innerText = title;
+        
+        if (pageId !== 'historyPage') pageStack.push(pageId);
+        
+        // 控制返回按钮显示
+        const backBtn = document.getElementById('backBtn');
+        backBtn.style.visibility = pageStack.length > 1 ? 'visible' : 'hidden';
+    }
+
+    function goBack() {
+        pageStack.pop();
+        const prevPage = pageStack[pageStack.length - 1];
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(prevPage).classList.add('active');
+        
+        if (prevPage === 'homePage') {
+            document.getElementById('navTitle').innerText = '陕西高校';
+            document.getElementById('backBtn').style.visibility = 'hidden';
+        } else if (prevPage === 'scorePage') {
+            document.getElementById('navTitle').innerText = '正在评分';
+        }
+    }
+
+    function openScorePage(uni) {
+        currentUni = uni;
+        document.getElementById('scoreUniName').innerText = uni.name;
+        
+        // 初始化滑块位置和文字
+        const sliders = document.querySelectorAll('input[type=range]');
+        sliders.forEach(slider => {
+            slider.value = 80;
+            updateSlider(slider, slider.nextElementSibling ? slider.previousElementSibling.querySelector('.score-val').id : '');
+        });
+        
+        showPage('scorePage', '正在评分');
+    }
+
+    // 提交评分
+    function submitScore() {
+        if (!currentUni) return;
+        
+        const canteen = document.getElementById('val-canteen').innerText;
+        const teach = document.getElementById('val-teach').innerText;
+        const faculty = document.getElementById('val-faculty').innerText;
+        const env = document.getElementById('val-env').innerText;
+
+        history.push({
+            name: currentUni.name,
+            canteen, teach, faculty, env,
+            time: new Date().toLocaleDateString()
+        });
+
+        // 按钮反馈动画
+        const btn = document.querySelector('.btn-primary');
+        const originalText = btn.innerText;
+        btn.style.background = '#34c759';
+        btn.innerText = '✓ 提交成功';
+        
+        setTimeout(() => {
+            btn.style.background = 'var(--accent)';
+            btn.innerText = originalText;
+            goBack();
+            renderHistory();
+        }, 1000);
+    }
+
+    // 渲染历史记录
+    function renderHistory() {
+        const list = document.getElementById('historyList');
+        if (history.length === 0) {
+            list.innerHTML = '<div class="empty-state">暂无评分记录</div>';
+            return;
+        }
+        
+        list.innerHTML = history.reverse().map(h => `
+            <div class="record-card">
+                <h4>${h.name} <span style="float:right; font-size:12px; color:#86868b; font-weight:normal;">${h.time}</span></h4>
+                <div class="record-tags">
+                    <span class="tag">食堂: ${h.canteen}</span>
+                    <span class="tag">教学: ${h.teach}</span>
+                    <span class="tag">师资: ${h.faculty}</span>
+                    <span class="tag">环境: ${h.env}</span>
+                </div>
+            </div>
+        `).join('');
+    }
 </script>
 </body>
 </html>
