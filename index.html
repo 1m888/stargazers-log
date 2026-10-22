@@ -1,177 +1,58 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>个人主页 陕西高校评分</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
-body{background:#f4f8ff;color:#222;padding:20px}
-header{background:#1967d2;color:#fff;padding:30px;text-align:center;border-radius:12px;margin-bottom:20px}
-.card{background:#fff;padding:22px;border-radius:12px;margin-bottom:18px;box-shadow:0 2px 8px #00000015}
-h2{color:#1967d2;margin-bottom:12px}
-.tab{display:flex;gap:8px;margin-bottom:16px}
-.tab div{flex:1;text-align:center;padding:10px;background:#e8f1fe;color:#1967d2;border-radius:8px;cursor:pointer}
-.tab div.on{background:#1967d2;color:#fff}
-.page{display:none}
-.page.show{display:block}
-label{display:block;margin:10px 0 4px;font-size:15px}
-select,input,textarea{width:100%;padding:10px;border:1px solid #ccc;border-radius:8px}
-.line{display:flex;align-items:center;gap:8px;margin:10px 0}
-.line span{width:90px;font-size:14px}
-button{width:100%;padding:12px;background:#1967d2;color:#fff;border:none;border-radius:8px;font-size:16px;margin-top:10px;cursor:pointer}
-.avg{margin-top:15px;padding:14px;background:#e8f1fe;text-align:center;border-radius:8px;font-size:24px;color:#1967d2;font-weight:bold}
-.msg{margin-top:10px;padding:10px;border-radius:8px;display:none}
-.ok{background:#e6f4ea;color:#137333}
-.warn{background:#fff3e0;color:#e65100}
-.item{padding:8px 0;border-bottom:1px solid #eee;font-size:14px}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Store</title>
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-<header>
-<h1>个人主页</h1>
-<p>陕西高校评分互动系统</p>
-</header>
-<div class="tab">
-<div class="on" onclick="go(0)">关于我</div>
-<div onclick="go(1)">高校打分</div>
-</div>
+  <header class="nav">
+    <div class="nav-inner">
+      <a href="#" class="logo">Store</a>
+      <nav class="nav-links">
+        <a href="#home" class="active">首页</a>
+        <a href="#products">全部产品</a>
+        <a href="#audio">音频</a>
+        <a href="#wearable">穿戴</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="icon-btn" aria-label="搜索">⌕</button>
+        <button class="icon-btn bag-btn" aria-label="购物袋">🛍<span class="bag-count">0</span></button>
+      </div>
+    </div>
+  </header>
 
-<div class="page show" id="p0">
-<div class="card">
-<h2>个人信息</h2>
-<p>出生年份：2005年</p>
-<p>毕业院校：西安交通大学城市学院</p>
-</div>
-<div class="card">
-<h2>实习经历</h2>
-<p>西安大洋供应链有限公司｜2024.07-2024.08</p>
-<p>上海蔚来汽车有限公司｜实习</p>
-</div>
-<div class="card">
-<h2>联系方式</h2>
-<p>微信号：FEM0098</p>
-</div>
-</div>
+  <main>
+    <section class="hero" id="home">
+      <h1 class="hero-title">全新登场。</h1>
+      <p class="hero-sub">轻盈、强大、恰到好处。</p>
+      <div class="hero-links">
+        <a href="#products" class="link">选购产品 ›</a>
+        <a href="#products" class="link">了解更多 ›</a>
+      </div>
+      <div class="hero-visual"></div>
+    </section>
 
-<div class="page" id="p1">
-<div class="card">
-<h2>陕西高校评分</h2>
-<label>选择院校</label>
-<select id="school">
-<option value="">--请选择--</option>
-<option>西安交通大学</option>
-<option>西北工业大学</option>
-<option>西北农林科技大学</option>
-<option>西安电子科技大学</option>
-<option>陕西师范大学</option>
-<option>西北大学</option>
-<option>长安大学</option>
-<option>西安理工大学</option>
-<option>西安建筑科技大学</option>
-<option>陕西科技大学</option>
-<option>西安科技大学</option>
-<option>西安石油大学</option>
-<option>西安工业大学</option>
-<option>西安外国语大学</option>
-<option>西北政法大学</option>
-<option>西安邮电大学</option>
-<option>西安财经大学</option>
-<option>西安工程大学</option>
-<option>陕西理工大学</option>
-<option>宝鸡文理学院</option>
-<option>咸阳师范学院</option>
-<option>渭南师范学院</option>
-<option>延安大学</option>
-<option>榆林学院</option>
-<option>安康学院</option>
-<option>商洛学院</option>
-<option>西安文理学院</option>
-<option>陕西学前师范学院</option>
-<option>西安培华学院</option>
-<option>西安欧亚学院</option>
-<option>西安外事学院</option>
-<option>西安翻译学院</option>
-<option>西京学院</option>
-<option>陕西服装工程学院</option>
-<option>陕西国际商贸学院</option>
-<option>西安思源学院</option>
-<option>西安交通大学城市学院</option>
-<option>西北大学现代学院</option>
-<option>西安建筑科技大学华清学院</option>
-<option>西安电子科技大学长安学院</option>
-<option>长安大学兴华学院</option>
-<option>陕西科技大学镐京学院</option>
-<option>西安理工大学高科学院</option>
-<option>西安科技大学高新学院</option>
-</select>
+    <section class="products" id="products">
+      <h2 class="section-title">全部产品</h2>
+      <div class="product-grid" id="productGrid"></div>
+    </section>
+  </main>
 
-<label>教学质量</label>
-<input type="range" min="1" max="10" value="5" id="s1">
-<label>师资力量</label>
-<input type="range" min="1" max="10" value="5" id="s2">
-<label>校园环境</label>
-<input type="range" min="1" max="10" value="5" id="s3">
-<label>食堂伙食</label>
-<input type="range" min="1" max="10" value="5" id="s4">
-<label>宿舍条件</label>
-<input type="range" min="1" max="10" value="5" id="s5">
-<label>学习氛围</label>
-<input type="range" min="1" max="10" value="5" id="s6">
+  <aside class="bag-panel" id="bagPanel">
+    <div class="bag-header">
+      <h3>购物袋</h3>
+      <button class="close-btn" id="closeBag">×</button>
+    </div>
+    <div class="bag-items" id="bagItems"></div>
+    <div class="bag-footer">
+      <span>合计</span>
+      <strong id="bagTotal">¥0</strong>
+    </div>
+  </aside>
+  <div class="overlay" id="overlay"></div>
 
-<label>评价人称呼</label>
-<input type="text" id="name">
-<label>留言</label>
-<textarea id="msgText" rows="3"></textarea>
-
-<button onclick="save()">提交评分</button>
-<div class="msg ok" id="okTip">提交成功，保存在本机浏览器</div>
-<div class="msg warn" id="warnTip">请先选择院校！</div>
-<div class="avg" id="avg">平均分：--</div>
-<h2 style="margin-top:20px">历史记录</h2>
-<div id="history"></div>
-</div>
-</div>
-
-<script>
-function go(n){
-document.querySelectorAll('.tab div').forEach((t,i)=>t.classList.toggle('on',i===n));
-document.querySelectorAll('.page').forEach((p,i)=>p.classList.toggle('show',i===n));
-}
-function save(){
-let school=document.getElementById('school').value;
-let okTip=document.getElementById('okTip');
-let warnTip=document.getElementById('warnTip');
-if(!school){
-warnTip.style.display='block';
-setTimeout(()=>warnTip.style.display='none',2000);
-return;
-}
-let s1=+document.getElementById('s1').value;
-let s2=+document.getElementById('s2').value;
-let s3=+document.getElementById('s3').value;
-let s4=+document.getElementById('s4').value;
-let s5=+document.getElementById('s5').value;
-let s6=+document.getElementById('s6').value;
-let avg=((s1+s2+s3+s4+s5+s6)/6).toFixed(1);
-document.getElementById('avg').innerText='平均分：'+avg;
-let name=document.getElementById('name').value;
-let msgText=document.getElementById('msgText').value;
-let rec={school,avg,name,msgText,time:new Date().toLocaleString()};
-let list=JSON.parse(localStorage.getItem('scoreList')||'[]');
-list.push(rec);
-localStorage.setItem('scoreList',JSON.stringify(list));
-render();
-okTip.style.display='block';
-setTimeout(()=>okTip.style.display='none',2000);
-}
-function render(){
-let list=JSON.parse(localStorage.getItem('scoreList')||'[]');
-let box=document.getElementById('history');
-if(list.length===0){box.innerHTML='暂无记录';return;}
-box.innerHTML=list.map(x=>'<div class="item">'+x.school+'｜'+x.avg+'分｜'+(x.name||'匿名')+'｜'+x.time+'<br>'+x.msgText+'</div>').join('');
-}
-render();
-</script>
+  <script src="js/main.js"></script>
 </body>
 </html>
