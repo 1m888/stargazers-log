@@ -1,58 +1,224 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Store</title>
-  <link rel="stylesheet" href="css/style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apple Style Store</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+            background: #ffffff;
+            color: #1d1d1f;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+        
+        /* 苹果风毛玻璃导航 */
+        .nav {
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
+            background: rgba(255, 255, 255, 0.72);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+        .nav-inner {
+            max-width: 1024px; margin: 0 auto; height: 48px; padding: 0 20px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .logo { font-size: 17px; font-weight: 600; color: #1d1d1f; text-decoration: none; letter-spacing: -0.02em;}
+        .nav-links { display: flex; gap: 24px; font-size: 13px; }
+        .nav-links a { color: #424245; text-decoration: none; transition: color 0.2s; }
+        .nav-links a:hover { color: #000; }
+        .bag-btn {
+            background: none; border: none; cursor: pointer; font-size: 16px; color: #1d1d1f; position: relative;
+        }
+        .bag-count {
+            position: absolute; top: -4px; right: -10px; background: #0071e3; color: #fff;
+            font-size: 10px; line-height: 16px; min-width: 16px; height: 16px; border-radius: 8px; text-align: center;
+        }
+
+        /* 核心过渡动画 */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 首屏 Hero */
+        .hero { max-width: 1024px; margin: 0 auto; padding: 120px 20px 60px; text-align: center; }
+        .hero h1 {
+            font-size: 56px; font-weight: 600; letter-spacing: -0.04em; line-height: 1.05;
+            animation: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+        .hero p {
+            margin-top: 16px; font-size: 21px; color: #86868b;
+            animation: fadeUp 0.8s 0.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        /* 商品列表 */
+        .products { max-width: 1024px; margin: 0 auto; padding: 40px 20px 100px; }
+        .products h2 { font-size: 32px; font-weight: 600; margin-bottom: 24px; letter-spacing: -0.02em; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+        .card {
+            background: #f5f5f7; border-radius: 20px; padding: 30px 20px; text-align: center;
+            cursor: pointer; transition: transform 0.3s ease;
+            animation: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+        .card:hover { transform: scale(1.02); }
+        .img-box { width: 100%; height: 200px; background: #fff; border-radius: 12px; margin-bottom: 20px; }
+        .card h3 { font-size: 17px; font-weight: 600; }
+        .card .price { margin-top: 8px; color: #86868b; font-size: 14px; }
+        .btn-add {
+            margin-top: 16px; background: #0071e3; color: #fff; border: none; padding: 8px 20px;
+            border-radius: 99px; font-size: 13px; cursor: pointer; transition: background 0.2s;
+        }
+        .btn-add:hover { background: #0077ed; }
+
+        /* 购物袋侧滑面板 */
+        .bag-panel {
+            position: fixed; top: 0; right: 0; width: 320px; height: 100%; background: #fff;
+            z-index: 200; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            box-shadow: -10px 0 30px rgba(0,0,0,0.1); display: flex; flex-direction: column;
+        }
+        .bag-panel.open { transform: translateX(0); }
+        .bag-header { padding: 24px; border-bottom: 1px solid #d2d2d7; display: flex; justify-content: space-between; align-items: center; }
+        .bag-header h3 { font-size: 20px; }
+        .close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #86868b; }
+        .bag-items { flex: 1; overflow-y: auto; padding: 20px 24px; }
+        .bag-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f5f5f7; font-size: 14px; }
+        .bag-footer { padding: 20px 24px; border-top: 1px solid #d2d2d7; display: flex; justify-content: space-between; font-weight: 600; }
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3);
+            z-index: 150; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+        .overlay.show { opacity: 1; pointer-events: auto; }
+
+        /* 手机端适配 */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hero h1 { font-size: 40px; }
+            .hero p { font-size: 17px; }
+        }
+    </style>
 </head>
 <body>
-  <header class="nav">
-    <div class="nav-inner">
-      <a href="#" class="logo">Store</a>
-      <nav class="nav-links">
-        <a href="#home" class="active">首页</a>
-        <a href="#products">全部产品</a>
-        <a href="#audio">音频</a>
-        <a href="#wearable">穿戴</a>
-      </nav>
-      <div class="nav-actions">
-        <button class="icon-btn" aria-label="搜索">⌕</button>
-        <button class="icon-btn bag-btn" aria-label="购物袋">🛍<span class="bag-count">0</span></button>
-      </div>
-    </div>
-  </header>
 
-  <main>
-    <section class="hero" id="home">
-      <h1 class="hero-title">全新登场。</h1>
-      <p class="hero-sub">轻盈、强大、恰到好处。</p>
-      <div class="hero-links">
-        <a href="#products" class="link">选购产品 ›</a>
-        <a href="#products" class="link">了解更多 ›</a>
-      </div>
-      <div class="hero-visual"></div>
-    </section>
+    <header class="nav">
+        <div class="nav-inner">
+            <a href="#" class="logo">Store</a>
+            <nav class="nav-links">
+                <a href="#">首页</a>
+                <a href="#products">全部产品</a>
+                <a href="#">音频</a>
+                <a href="#">穿戴</a>
+            </nav>
+            <button class="bag-btn" id="openBag">🛍 <span class="bag-count" id="bagCount">0</span></button>
+        </div>
+    </header>
 
-    <section class="products" id="products">
-      <h2 class="section-title">全部产品</h2>
-      <div class="product-grid" id="productGrid"></div>
-    </section>
-  </main>
+    <main>
+        <section class="hero">
+            <h1>全新登场。</h1>
+            <p>轻盈、强大、恰到好处。</p>
+        </section>
 
-  <aside class="bag-panel" id="bagPanel">
-    <div class="bag-header">
-      <h3>购物袋</h3>
-      <button class="close-btn" id="closeBag">×</button>
-    </div>
-    <div class="bag-items" id="bagItems"></div>
-    <div class="bag-footer">
-      <span>合计</span>
-      <strong id="bagTotal">¥0</strong>
-    </div>
-  </aside>
-  <div class="overlay" id="overlay"></div>
+        <section class="products" id="products">
+            <h2>全部产品</h2>
+            <div class="grid" id="productGrid"></div>
+        </section>
+    </main>
 
-  <script src="js/main.js"></script>
+    <div class="overlay" id="overlay"></div>
+    <aside class="bag-panel" id="bagPanel">
+        <div class="bag-header">
+            <h3>购物袋</h3>
+            <button class="close-btn" id="closeBag">×</button>
+        </div>
+        <div class="bag-items" id="bagItems"></div>
+        <div class="bag-footer">
+            <span>合计</span>
+            <span id="bagTotal">¥0</span>
+        </div>
+    </aside>
+
+    <script>
+        const products = [
+            { id: 1, name: "AirPods Pro", price: 1899 },
+            { id: 2, name: "Apple Watch", price: 2999 },
+            { id: 3, name: "HomePod mini", price: 749 },
+            { id: 4, name: "MagSafe 充电器", price: 329 }
+        ];
+
+        const grid = document.getElementById('productGrid');
+        const bagPanel = document.getElementById('bagPanel');
+        const overlay = document.getElementById('overlay');
+        const bagItems = document.getElementById('bagItems');
+        const bagTotal = document.getElementById('bagTotal');
+        const bagCount = document.getElementById('bagCount');
+        let cart = [];
+
+        // 渲染商品
+        products.forEach((p, index) => {
+            const delay = index * 0.1;
+            grid.innerHTML += `
+                <div class="card" style="animation-delay: ${delay}s">
+                    <div class="img-box"></div>
+                    <h3>${p.name}</h3>
+                    <div class="price">¥${p.price}</div>
+                    <button class="btn-add" onclick="addToCart(${p.id})">加入购物袋</button>
+                </div>
+            `;
+        });
+
+        // 加入购物袋
+        function addToCart(id) {
+            const item = products.find(p => p.id === id);
+            cart.push(item);
+            updateCart();
+            openBag();
+        }
+
+        // 更新购物袋数据
+        function updateCart() {
+            bagCount.innerText = cart.length;
+            if (cart.length === 0) {
+                bagItems.innerHTML = '<p style="color:#86868b; margin-top:20px;">购物袋是空的。</p>';
+            } else {
+                bagItems.innerHTML = cart.map((item, index) => `
+                    <div class="bag-item">
+                        <span>${item.name}</span>
+                        <span>¥${item.price} <a href="javascript:void(0)" onclick="removeItem(${index})" style="color:#0071e3; margin-left:10px; font-size:12px; text-decoration:none;">移除</a></span>
+                    </div>
+                `).join('');
+            }
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            bagTotal.innerText = `¥${total}`;
+        }
+
+        // 移除商品
+        function removeItem(index) {
+            cart.splice(index, 1);
+            updateCart();
+        }
+
+        // 侧滑面板控制
+        function openBag() {
+            bagPanel.classList.add('open');
+            overlay.classList.add('show');
+        }
+
+        function closeBag() {
+            bagPanel.classList.remove('open');
+            overlay.classList.remove('show');
+        }
+
+        document.getElementById('openBag').addEventListener('click', openBag);
+        document.getElementById('closeBag').addEventListener('click', closeBag);
+        overlay.addEventListener('click', closeBag);
+
+        // 初始化
+        updateCart();
+    </script>
 </body>
 </html>
