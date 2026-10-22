@@ -1,201 +1,66 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apple Style Store</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
-            background: #ffffff;
-            color: #1d1d1f;
-            -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
-        }
-        
-        /* 苹果风毛玻璃导航 */
-        .nav {
-            position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
-            background: rgba(255, 255, 255, 0.72);
-            backdrop-filter: saturate(180%) blur(20px);
-            -webkit-backdrop-filter: saturate(180%) blur(20px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-        }
-        .nav-inner {
-            height: 48px; padding: 0 20px;
-            display: flex; align-items: center; justify-content: space-between;
-        }
-        .logo { font-size: 17px; font-weight: 600; color: #1d1d1f; text-decoration: none; letter-spacing: -0.02em;}
-        .bag-btn { background: none; border: none; cursor: pointer; font-size: 16px; color: #1d1d1f; position: relative; }
-        .bag-count {
-            position: absolute; top: -4px; right: -10px; background: #0071e3; color: #fff;
-            font-size: 10px; line-height: 16px; min-width: 16px; height: 16px; border-radius: 8px; text-align: center;
-        }
-
-        /* 首屏 */
-        .hero { padding: 120px 20px 60px; text-align: center; }
-        .hero h1 { font-size: 48px; font-weight: 600; letter-spacing: -0.04em; line-height: 1.05; margin-bottom: 16px; }
-        .hero p { font-size: 18px; color: #86868b; margin-bottom: 30px; }
-        
-        /* 显眼的测试按钮 */
-        .btn-main {
-            background: #0071e3; color: #fff; border: none; padding: 16px 32px;
-            border-radius: 99px; font-size: 16px; font-weight: 600; cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0, 113, 227, 0.3); transition: all 0.2s;
-        }
-        .btn-main:hover { background: #0077ed; transform: scale(1.02); }
-
-        /* 商品列表 */
-        .products { padding: 40px 20px 100px; max-width: 1024px; margin: 0 auto; }
-        .products h2 { font-size: 28px; font-weight: 600; margin-bottom: 20px; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .card {
-            background: #f5f5f7; border-radius: 18px; padding: 15px; text-align: center;
-        }
-        .card svg { width: 100%; height: 120px; background: #fff; border-radius: 12px; margin-bottom: 15px; padding: 10px; }
-        .card h3 { font-size: 15px; font-weight: 600; }
-        .card .price { color: #86868b; font-size: 13px; margin-top: 4px; }
-
-        /* 遮罩层 */
-        .overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4);
-            z-index: 150; opacity: 0; pointer-events: none; transition: opacity 0.3s;
-        }
-        .overlay.show { opacity: 1; pointer-events: auto; }
-
-        /* 苹果风支付弹窗（Apple Pay 风格） */
-        .pay-modal {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            background: #f2f2f7; border-radius: 20px 20px 0 0; z-index: 200;
-            transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-            padding: 24px; padding-bottom: 40px;
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
-        }
-        .pay-modal.show { transform: translateY(0); }
-        
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .modal-header h3 { font-size: 18px; font-weight: 600; }
-        .modal-header span { color: #0071e3; font-size: 15px; cursor: pointer; }
-        
-        .pay-card {
-            background: #fff; border-radius: 14px; padding: 20px;
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
-        }
-        .pay-card .bank { display: flex; align-items: center; gap: 10px; font-weight: 600; }
-        .pay-card .amount { font-size: 20px; font-weight: 700; }
-
-        .btn-confirm {
-            background: #0071e3; color: #fff; border: none; padding: 16px;
-            border-radius: 14px; font-size: 17px; font-weight: 600; cursor: pointer; width: 100%;
-            display: flex; justify-content: center; align-items: center; gap: 10px;
-        }
-        
-        /* 支付成功后的对勾 */
-        .success-icon {
-            display: none; width: 24px; height: 24px; border-radius: 50%; background: #34c759;
-            color: white; text-align: center; line-height: 24px; font-size: 14px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body { font-family: -apple-system, sans-serif; background: #f5f5f7; text-align: center; padding: 60px 20px; margin: 0; }
+  h1 { font-size: 36px; letter-spacing: -1px; color: #1d1d1f; }
+  p { color: #86868b; font-size: 18px; margin-bottom: 40px; }
+  .btn { background: #0071e3; color: #fff; border: none; padding: 16px 32px; border-radius: 99px; font-size: 18px; font-weight: 600; cursor: pointer; }
+  
+  /* 支付弹窗 */
+  .modal { position: fixed; bottom: -100%; left: 0; width: 100%; background: #fff; border-radius: 24px 24px 0 0; padding: 30px 20px; box-sizing: border-box; transition: bottom 0.3s ease; box-shadow: 0 -10px 40px rgba(0,0,0,0.1); text-align: left; }
+  .modal.show { bottom: 0; }
+  .modal h3 { margin-top: 0; font-size: 20px; text-align: center; }
+  .pay-card { background: #f5f5f7; padding: 20px; border-radius: 16px; display: flex; justify-content: space-between; font-size: 20px; font-weight: 600; margin: 20px 0; }
+  .btn-confirm { background: #1d1d1f; color: #fff; border: none; padding: 18px; border-radius: 16px; font-size: 18px; font-weight: 600; width: 100%; cursor: pointer; }
+  .mask { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; }
+  .mask.show { display: block; }
+</style>
 </head>
 <body>
 
-    <header class="nav">
-        <div class="nav-inner">
-            <a href="#" class="logo">Store</a>
-            <button class="bag-btn">🛍 <span class="bag-count" id="bagCount">0</span></button>
-        </div>
-    </header>
+<h1>全新登场。</h1>
+<p>点击下方按钮体验假付款功能</p>
+<button class="btn" onclick="openPay()">立即购买</button>
 
-    <main>
-        <section class="hero">
-            <h1>全新登场。</h1>
-            <p>轻盈、强大、恰到好处。</p>
-            <!-- 这就是你要的支付功能入口，在最显眼的位置 -->
-            <button class="btn-main" onclick="openPayment()">立即体验模拟支付</button>
-        </section>
+<div class="mask" id="mask" onclick="closePay()"></div>
 
-        <section class="products">
-            <h2>热门推荐</h2>
-            <div class="grid">
-                <div class="card">
-                    <svg viewBox="0 0 100 100" fill="none" stroke="#1d1d1f" stroke-width="2"><path d="M35 40 C35 30 45 25 50 25 C55 25 65 30 65 40 V75 A5 5 0 0 1 60 80 H40 A5 5 0 0 1 35 75 V40 Z"/><circle cx="50" cy="45" r="8"/><path d="M20 50 C20 40 30 35 35 35 V75 A5 5 0 0 1 30 80 H25 A5 5 0 0 1 20 75 V50 Z"/><path d="M80 50 C80 40 70 35 65 35 V75 A5 5 0 0 0 70 80 H75 A5 5 0 0 0 80 75 V50 Z"/></svg>
-                    <h3>AirPods Pro</h3>
-                    <div class="price">¥1899</div>
-                </div>
-                <div class="card">
-                    <svg viewBox="0 0 100 100" fill="none" stroke="#1d1d1f" stroke-width="2"><rect x="30" y="25" width="40" height="50" rx="10"/><path d="M40 25 V15 H60 V25"/><path d="M40 75 V85 H60 V75"/><rect x="35" y="30" width="30" height="40" rx="5" fill="#f5f5f7"/><circle cx="50" cy="50" r="12" stroke-dasharray="2 4"/><path d="M50 44 V50 L54 52"/></svg>
-                    <h3>Apple Watch</h3>
-                    <div class="price">¥2999</div>
-                </div>
-            </div>
-        </section>
-    </main>
+<div class="modal" id="modal">
+  <h3>确认订单</h3>
+  <div class="pay-card">
+    <span>Apple Pay</span>
+    <span>¥ 1,899</span>
+  </div>
+  <button class="btn-confirm" id="payBtn" onclick="doPay()">双击侧边按钮付款</button>
+</div>
 
-    <!-- 遮罩层 -->
-    <div class="overlay" id="overlay" onclick="closePayment()"></div>
-
-    <!-- 支付弹窗 -->
-    <div class="pay-modal" id="payModal">
-        <div class="modal-header">
-            <h3>确认订单</h3>
-            <span onclick="closePayment()">取消</span>
-        </div>
-        <div class="pay-card">
-            <div class="bank">
-                <span style="font-size: 20px;">💳</span> Apple Pay
-            </div>
-            <div class="amount">¥ 4,898</div>
-        </div>
-        <button class="btn-confirm" id="confirmBtn" onclick="processPayment()">
-            <span id="btnText">双击侧边按钮付款</span>
-            <div class="success-icon" id="successIcon">✓</div>
-        </button>
-    </div>
-
-    <script>
-        const overlay = document.getElementById('overlay');
-        const payModal = document.getElementById('payModal');
-        const confirmBtn = document.getElementById('confirmBtn');
-        const btnText = document.getElementById('btnText');
-        const successIcon = document.getElementById('successIcon');
-
-        // 打开支付面板
-        function openPayment() {
-            payModal.classList.add('show');
-            overlay.classList.add('show');
-            // 每次打开时重置状态
-            btnText.innerText = '双击侧边按钮付款';
-            successIcon.style.display = 'none';
-            confirmBtn.style.background = '#0071e3';
-            confirmBtn.disabled = false;
-        }
-
-        // 关闭支付面板
-        function closePayment() {
-            payModal.classList.remove('show');
-            overlay.classList.remove('show');
-        }
-
-        // 模拟支付过程（转圈 -> 成功）
-        function processPayment() {
-            confirmBtn.disabled = true;
-            btnText.innerText = '处理中...';
-            
-            setTimeout(() => {
-                // 模拟成功
-                confirmBtn.style.background = '#34c759';
-                successIcon.style.display = 'inline-block';
-                btnText.innerText = '支付成功';
-
-                // 1.5秒后自动关闭
-                setTimeout(() => {
-                    closePayment();
-                    document.getElementById('bagCount').innerText = '2'; // 随便变个数字好玩
-                }, 1500);
-
-            }, 1200); // 假装处理了1.2秒
-        }
-    </script>
+<script>
+  function openPay() {
+    document.getElementById('modal').classList.add('show');
+    document.getElementById('mask').classList.add('show');
+  }
+  function closePay() {
+    document.getElementById('modal').classList.remove('show');
+    document.getElementById('mask').classList.remove('show');
+    setTimeout(() => {
+      const btn = document.getElementById('payBtn');
+      btn.innerText = '双击侧边按钮付款';
+      btn.style.background = '#1d1d1f';
+      btn.disabled = false;
+    }, 300);
+  }
+  function doPay() {
+    const btn = document.getElementById('payBtn');
+    btn.innerText = '处理中...';
+    btn.disabled = true;
+    setTimeout(() => {
+      btn.innerText = '✓ 支付成功';
+      btn.style.background = '#34c759';
+      setTimeout(closePay, 1500);
+    }, 1200);
+  }
+</script>
 </body>
 </html>
